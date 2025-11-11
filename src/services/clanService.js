@@ -25,8 +25,8 @@ export class ClanService {
     return this.apiClient.fetchCurrentWar(clanTag);
   }
 
-  async getWarLeagueData(clanTag) {
-    const leagueGroup = await this.apiClient.fetchWarLeagueGroup(clanTag);
+  async getCWLData(clanTag) {
+    const leagueGroup = await this.apiClient.fetchCWLGroup(clanTag);
     const warTags = leagueGroup.rounds
       .map(round => round.warTags)
       .flat();

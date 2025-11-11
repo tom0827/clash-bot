@@ -12,7 +12,7 @@ dotenv.config();
 const deployCommands = async () => {
   const token = process.env.DISCORD_BOT_TOKEN;
   const clientId = process.env.DISCORD_CLIENT_ID;
-  const guildId = process.env.DISCORD_GUILD_ID; // Optional: for guild-specific commands
+  const guildId = process.env.DISCORD_GUILD_ID;
 
   if (!token || !clientId) {
     console.error('Missing DISCORD_BOT_TOKEN or DISCORD_CLIENT_ID in environment variables');

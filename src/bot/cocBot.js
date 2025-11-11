@@ -12,46 +12,60 @@ export class CocBot {
     this.clanService = new ClanService();
   }
 
-  async handleClanScoreCommand(clanTag) {
+  async handleDonationScoresCommand(clanTag) {
     try {
       const date = DateUtils.getCurrentDateString();
-      
-      // Get clan data and calculate donation scores
+
+      // Get clan data and calculate donation scores only
       const clanData = await this.clanService.getClanData(clanTag);
       const donationScores = this.clanService.calculateDonationScores(clanData.memberList);
-      
-      // Get capital raid data and scores
-      const capitalRaid = await this.clanService.getMostRecentCapitalRaid(clanTag);
-      const capitalRaidScores = this.clanService.calculateCapitalRaidScores(capitalRaid);
-      
-      // Get war league data and scores (if available)
-      let warLeagueScores = null;
-      try {
-        const { wars } = await this.clanService.getWarLeagueData(clanTag);
-        warLeagueScores = this.clanService.calculateWarLeagueScores(wars, clanTag);
-      } catch (error) {
-        console.log('War league data not available:', error.message);
-      }
 
       // Save data files
       await FileManager.saveAsJSON(clanData, `${clanTag}_clan_data_${date}`, "clans");
       await FileManager.saveAsJSON(donationScores, `${clanTag}_donation_scores_${date}`, "scores");
-      await FileManager.saveAsJSON(capitalRaidScores, `${clanTag}_capital_raid_scores_${date}`, "scores");
-      
-      if (warLeagueScores) {
-        await FileManager.saveAsJSON(warLeagueScores, `${clanTag}_war_league_scores_${date}`, "scores");
-        await FileManager.saveAsCSV(warLeagueScores, `${clanTag}_war_league_scores_${date}`, "scores");
-      }
 
-      return {
-        donationScores,
-        capitalRaidScores,
-        warLeagueScores,
-        clanName: clanData.name
-      };
+      return donationScores
       
     } catch (error) {
-      console.error('Error fetching clan scores:', error);
+      console.error('Error fetching donation scores:', error);
+      throw error;
+    }
+  }
+
+  async handleRaidScoresCommand(clanTag) {
+    try {
+      const date = DateUtils.getCurrentDateString();
+      
+      // Get capital raid data and scores only
+      const capitalRaid = await this.clanService.getMostRecentCapitalRaid(clanTag);
+      const capitalRaidScores = this.clanService.calculateCapitalRaidScores(capitalRaid);
+      
+      // Save data file
+      await FileManager.saveAsJSON(capitalRaidScores, `${clanTag}_capital_raid_scores_${date}`, "scores");
+
+      return capitalRaidScores
+      
+    } catch (error) {
+      console.error('Error fetching capital raid scores:', error);
+      throw error;
+    }
+  }
+
+  async handleCWLScoresCommand(clanTag) {
+    try {
+      const date = DateUtils.getCurrentDateString();
+      
+      // Get war league data and scores only
+      const { wars } = await this.clanService.getCWLData(clanTag);
+      const warLeagueScores = this.clanService.calculateWarLeagueScores(wars, clanTag);
+      
+      // Save data file
+      await FileManager.saveAsJSON(warLeagueScores, `${clanTag}_war_league_scores_${date}`, "scores");
+
+      return warLeagueScores;
+      
+    } catch (error) {
+      console.error('Error fetching war league scores:', error);
       throw error;
     }
   }

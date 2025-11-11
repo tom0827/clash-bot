@@ -52,7 +52,7 @@ export class CocApiClient {
     return this.makeRequest(`/clans/${encodeURIComponent(clanTag)}/currentwar`);
   }
 
-  async fetchWarLeagueGroup(clanTag) {
+  async fetchCWLGroup(clanTag) {
     return this.makeRequest(
       `/clans/${encodeURIComponent(clanTag)}/currentwar/leaguegroup`
     );
