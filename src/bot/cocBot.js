@@ -21,10 +21,6 @@ export class CocBot {
       const clanData = await this.clanService.getClanData(clanTag);
       const donationScores = this.clanService.calculateDonationScores(clanData.memberList);
 
-      // Save data files
-      await FileManager.saveAsJSON(clanData, `${clanTag}_clan_data_${date}`, "clans");
-      await FileManager.saveAsJSON(donationScores, `${clanTag}_donation_scores_${date}`, "scores");
-
       return donationScores;
     });
   }
@@ -36,9 +32,6 @@ export class CocBot {
       // Get capital raid data and scores only
       const capitalRaid = await this.clanService.getMostRecentCapitalRaid(clanTag);
       const capitalRaidScores = this.clanService.calculateCapitalRaidScores(capitalRaid);
-      
-      // Save data file
-      await FileManager.saveAsJSON(capitalRaidScores, `${clanTag}_capital_raid_scores_${date}`, "scores");
 
       return capitalRaidScores;
     });
@@ -51,9 +44,6 @@ export class CocBot {
       // Get war league data and scores only
       const { wars } = await this.clanService.getCWLData(clanTag);
       const warLeagueScores = this.clanService.calculateWarLeagueScores(wars, clanTag);
-      
-      // Save data file
-      await FileManager.saveAsJSON(warLeagueScores, `${clanTag}_war_league_scores_${date}`, "scores");
 
       return warLeagueScores;
     });
@@ -63,8 +53,6 @@ export class CocBot {
     return await CommandLogger.logCommand('player-info', async () => {
       const playerData = await this.playerService.getPlayerData(playerTag);
       const date = DateUtils.getCurrentDateString();
-      
-      await FileManager.saveAsJSON(playerData, `${playerTag}_player_data_${date}`, "players");
       
       return playerData;
     });
