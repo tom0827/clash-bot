@@ -6,6 +6,7 @@
 import { ClanService } from '../services/clanService.js';
 import { FileManager } from '../utils/fileUtils.js';
 import { DateUtils } from '../utils/dateUtils.js';
+import { CommandLogger } from '../utils/commandLogger.js';
 
 export class CocBot {
   constructor() {
@@ -13,7 +14,7 @@ export class CocBot {
   }
 
   async handleDonationScoresCommand(clanTag) {
-    try {
+    return await CommandLogger.logCommand('donation-scores', async () => {
       const date = DateUtils.getCurrentDateString();
 
       // Get clan data and calculate donation scores only
@@ -24,16 +25,12 @@ export class CocBot {
       await FileManager.saveAsJSON(clanData, `${clanTag}_clan_data_${date}`, "clans");
       await FileManager.saveAsJSON(donationScores, `${clanTag}_donation_scores_${date}`, "scores");
 
-      return donationScores
-      
-    } catch (error) {
-      console.error('Error fetching donation scores:', error);
-      throw error;
-    }
+      return donationScores;
+    });
   }
 
   async handleRaidScoresCommand(clanTag) {
-    try {
+    return await CommandLogger.logCommand('raid-scores', async () => {
       const date = DateUtils.getCurrentDateString();
       
       // Get capital raid data and scores only
@@ -43,16 +40,12 @@ export class CocBot {
       // Save data file
       await FileManager.saveAsJSON(capitalRaidScores, `${clanTag}_capital_raid_scores_${date}`, "scores");
 
-      return capitalRaidScores
-      
-    } catch (error) {
-      console.error('Error fetching capital raid scores:', error);
-      throw error;
-    }
+      return capitalRaidScores;
+    });
   }
 
   async handleCWLScoresCommand(clanTag) {
-    try {
+    return await CommandLogger.logCommand('cwl-scores', async () => {
       const date = DateUtils.getCurrentDateString();
       
       // Get war league data and scores only
@@ -63,26 +56,18 @@ export class CocBot {
       await FileManager.saveAsJSON(warLeagueScores, `${clanTag}_war_league_scores_${date}`, "scores");
 
       return warLeagueScores;
-      
-    } catch (error) {
-      console.error('Error fetching war league scores:', error);
-      throw error;
-    }
+    });
   }
 
   async handlePlayerInfoCommand(playerTag) {
-    try {
+    return await CommandLogger.logCommand('player-info', async () => {
       const playerData = await this.playerService.getPlayerData(playerTag);
       const date = DateUtils.getCurrentDateString();
       
       await FileManager.saveAsJSON(playerData, `${playerTag}_player_data_${date}`, "players");
       
       return playerData;
-      
-    } catch (error) {
-      console.error('Error fetching player data:', error);
-      throw error;
-    }
+    });
   }
 
   formatScoreResponse(donationScores, capitalRaidScores, warLeagueScores) {

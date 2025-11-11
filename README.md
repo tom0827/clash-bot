@@ -1,35 +1,13 @@
 # 🏰 CoC Discord Bot
 
-A Discord bot for tracking Clash of Clans clan participation and scoring with beautiful embeds and slash commands.
-
-## 🚀 Project Structure
-
-```
-src/
-├── api/
-│   └── cocClient.js         # Clash of Clans API client
-├── services/
-│   ├── clanService.js       # Clan-related operations
-│   ├── playerService.js     # Player-related operations
-│   └── scoreService.js      # Scoring calculations
-├── utils/
-│   ├── fileUtils.js         # File operations
-│   └── dateUtils.js         # Date utilities
-├── bot/
-│   ├── cocBot.js           # CoC data processing
-│   ├── discordBot.js       # Discord bot client
-│   └── deployCommands.js   # Command deployment
-└── index.js                # Main application entry
-```
+A Discord bot for tracking Clash of Clans clan participation and scoring with embeds and slash commands.
 
 ## ✨ Features
 
-- **🎮 Discord Slash Commands**: Modern Discord integration with beautiful embeds
+- **🎮 Discord Slash Commands**: Modern Discord integration with embeds
 - **💰 Donation Scoring**: Calculate scores based on clan member donations
 - **🏛️ Capital Raid Scoring**: Score members based on capital raid performance
 - **⚔️ War League Scoring**: Comprehensive scoring for clan war league performance
-- **📊 Data Persistence**: Save scores and data as JSON and CSV files
-- **🏗️ Modular Architecture**: Clean separation of concerns for easy maintenance
 
 ## 🛠️ Setup Instructions
 
@@ -78,8 +56,9 @@ src/
 
 ## 🎯 Discord Commands
 
-- `/clan-scores <clan-tag>` - Get comprehensive scores for all clan members
-- `/player-info <player-tag>` - Get detailed information about a player
+- `/cwl-scores` - Get most recent Clan War League scores
+- `/donation-scores` - Get donation scores for this current season
+- `/raid-scores` - Get raid scores for most recent Clan Capital raid
 - `/help` - Show help information and commands
 
 ## 🎮 Usage Examples
@@ -106,7 +85,10 @@ src/
 - 10,000+: 1 point
 
 ### War League
-- Perfect stars: 30 points
+- Perfect stars:
+   - 3+ Attacks: 30 points
+   - 2 Attack2: 20 points
+   - 1 Attack: 10 points
 - 2+ avg stars + 80%+ destruction: 25 points
 - 2+ avg stars + 70%+ destruction: 20 points
 - 2+ avg stars + 60%+ destruction: 15 points
