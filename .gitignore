@@ -1,0 +1,5 @@
+.env
+/node_modules
+/players
+/clans
+/scores
