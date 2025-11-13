@@ -21,10 +21,10 @@ export class CocApiClient {
         Accept: "application/json",
       },
     });
-
+  
     if (!response.ok) {
       const text = await response.text();
-      const error = new Error(`API error: ${response.status}`);
+      const error = new Error(`API error: ${response.status} [${response.statusText}]`);
       error.status = response.status;
       error.body = text;
       throw error;
@@ -59,7 +59,9 @@ export class CocApiClient {
   }
 
   async fetchWarFromTag(warTag) {
-    return this.makeRequest(`/clanwarleagues/wars/${encodeURIComponent(warTag)}`);
+    return this.makeRequest(
+      `/clanwarleagues/wars/${encodeURIComponent(warTag)}`
+    );
   }
 
   async fetchMultipleWars(warTags) {
@@ -67,7 +69,7 @@ export class CocApiClient {
       throw new Error("warTags must be an array");
     }
 
-    const requests = warTags.map(warTag => this.fetchWarFromTag(warTag));
+    const requests = warTags.map((warTag) => this.fetchWarFromTag(warTag));
     return Promise.all(requests);
   }
 }

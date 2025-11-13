@@ -27,8 +27,13 @@ export class EmbedBuilderService {
           inline: false,
         },
         {
-          name: "/war-scores",
+          name: "/cwl-scores",
           value: "Get war league scores for all clan members",
+          inline: false,
+        },
+        {
+          name: "/war-scores",
+          value: "Get scores for the current regular war",
           inline: false,
         },
         {
@@ -141,6 +146,41 @@ export class EmbedBuilderService {
       embed.addFields({
         name: "📊 Status",
         value: "No war league data available",
+        inline: false,
+      });
+    }
+
+    return embed;
+  }
+
+  createWarScoreEmbed(scoreData) {
+    const embed = new EmbedBuilder()
+      .setColor("#800080")
+      .setTitle("⚔️ Regular War Scores")
+      .setTimestamp();
+
+    if (scoreData.length > 0) {
+      for (let i = 0; i < scoreData.length; i += this.CHUNK_SIZE) {
+        const chunk = scoreData.slice(i, i + this.CHUNK_SIZE);
+        let warScores = chunk
+          .map(
+            (player, idx) =>
+              `${i + idx + 1}. **${player.name}**: ${
+                player.totalStars
+              }⭐ (${player.totalAttacks} attacks) - ${player.score} pts`
+          )
+          .join("\n");
+
+        embed.addFields({
+          name: `📊 Players ${i + 1} - ${i + chunk.length}`,
+          value: warScores,
+          inline: false,
+        });
+      }
+    } else {
+      embed.addFields({
+        name: "📊 Status",
+        value: "No war participants with scores available",
         inline: false,
       });
     }

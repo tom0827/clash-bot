@@ -90,6 +90,37 @@ export class ClanService {
       .sort((a, b) => b.score - a.score);
   }
 
+  calculateRegularWarScores(war, clanTag) {
+    // if (war.state === "notInWar") {
+    //   throw new Error("Clan is not currently in a war.");
+    // }
+
+    // if (war.state !== "warEnded") {
+    //   throw new Error(`War is in ${war.state} state. Scores are only available for ended wars.`);
+    // }
+
+    // Determine which side of the war our clan is on
+    const ourClan = war.clan.tag === clanTag ? war.clan : war.opponent;
+    const memberDataMap = new Map();
+
+    // Process our clan members
+    ourClan.members.forEach((member) => {
+      const memberData = {
+        tag: member.tag,
+        name: member.name,
+        attacks: member.attacks || [],
+      };
+
+      this._calculateRegularWarMemberStats(memberData);
+      memberData.score = this.scoreCalculator.calculateRegularWarScore(memberData);
+      memberDataMap.set(member.tag, memberData);
+    });
+
+    return Array.from(memberDataMap.values())
+      .filter((member) => member.score > 0)
+      .sort((a, b) => b.score - a.score);
+  }
+
   _processWarMembers(members, memberDataMap) {
     members.forEach((member) => {
       if (!memberDataMap.has(member.tag)) {
@@ -130,5 +161,29 @@ export class ClanService {
         2
       )
     );
+  }
+
+  _calculateRegularWarMemberStats(memberData) {
+    memberData.totalStars = memberData.attacks.reduce(
+      (sum, attack) => sum + attack.stars,
+      0
+    );
+    memberData.totalDestructionPercentage = memberData.attacks.reduce(
+      (sum, attack) => sum + attack.destructionPercentage,
+      0
+    );
+    memberData.totalAttacks = memberData.attacks.length;
+    
+    if (memberData.totalAttacks > 0) {
+      memberData.averageStars = parseFloat(
+        (memberData.totalStars / memberData.totalAttacks).toFixed(2)
+      );
+      memberData.averageDestructionPercentage = parseFloat(
+        (memberData.totalDestructionPercentage / memberData.totalAttacks).toFixed(2)
+      );
+    } else {
+      memberData.averageStars = 0;
+      memberData.averageDestructionPercentage = 0;
+    }
   }
 }

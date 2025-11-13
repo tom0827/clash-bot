@@ -21,6 +21,10 @@ export class Commands {
         .setDescription("Get clan war league scores for all clan members"),
 
       new SlashCommandBuilder()
+        .setName("war-scores")
+        .setDescription("Get scores for the current regular war"),
+
+      new SlashCommandBuilder()
         .setName("help")
         .setDescription("Show help information and commands"),
     ];

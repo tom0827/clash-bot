@@ -22,6 +22,9 @@ export class CommandHandler {
       case "cwl-scores":
         await this.handleCwlScoresCommand(interaction);
         break;
+      case "war-scores":
+        await this.handleWarScoresCommand(interaction);
+        break;
       case "help":
         await this.handleHelpCommand(interaction);
         break;
@@ -111,6 +114,34 @@ export class CommandHandler {
       }
 
       const embed = this.embedBuilder.createCWLScoreEmbed(result);
+      await interaction.editReply({ embeds: [embed] });
+    } catch (error) {
+      await interaction.editReply({ content: `Error: ${error.message}` });
+    }
+  }
+
+  async handleWarScoresCommand(interaction) {
+    const clanTag = process.env.CLAN_TAG;
+
+    if (!clanTag) {
+      await interaction.reply({
+        content: "Error: CLAN_TAG not configured in environment variables.",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    await interaction.deferReply();
+
+    try {
+      const result = await this.cocBot.handleWarScoresCommand(clanTag);
+
+      if (typeof result === "string" && result.startsWith("Error")) {
+        await interaction.editReply({ content: result });
+        return;
+      }
+
+      const embed = this.embedBuilder.createWarScoreEmbed(result);
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       await interaction.editReply({ content: `Error: ${error.message}` });

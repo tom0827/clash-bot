@@ -26,12 +26,10 @@ export class ScoreCalculator {
     const maxStars =
       this._getMaxPossibleStars(memberData) == memberData.totalStars;
 
-    if (maxStars && memberData.totalBattles >= 3) {
-      return 30;
-    } else if (maxStars && memberData.totalBattles == 2) {
-      return 20;
-    } else if (maxStars && memberData.totalBattles == 1) {
-      return 10;
+    if (maxStars) {
+      if (memberData.totalBattles >= 3) return 30;
+      if (memberData.totalBattles == 2) return 20;
+      if (memberData.totalBattles == 1) return 10;
     }
 
     if (memberData.averageStars >= 2.0) {
@@ -45,6 +43,16 @@ export class ScoreCalculator {
       return 5;
     }
 
+    return 0;
+  }
+
+  calculateRegularWarScore(memberData) {
+    // Regular war scoring: each player gets up to 2 attacks
+    const totalStars = memberData.totalStars;
+
+    if (totalStars === 6) return 3;
+    if (totalStars >= 4) return 2;
+    if (totalStars >= 2) return 1;
     return 0;
   }
 

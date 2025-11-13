@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { DiscordBot } from "./bot/discordBot.js";
-import { CommandLogger } from "./utils/commandLogger.js";
 
 const main = async () => {
   console.log("🚀 Starting CoC Discord Bot...");
@@ -19,14 +18,12 @@ const main = async () => {
     // Graceful shutdown handling
     process.on('SIGINT', async () => {
       console.log('\n🛑 Shutting down bot...');
-      await CommandLogger.saveLogsToFile();
       await bot.stop();
       process.exit(0);
     });
     
     process.on('SIGTERM', async () => {
       console.log('\n🛑 Shutting down bot...');
-      await CommandLogger.saveLogsToFile();
       await bot.stop();
       process.exit(0);
     });

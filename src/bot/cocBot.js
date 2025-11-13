@@ -40,12 +40,24 @@ export class CocBot {
   async handleCWLScoresCommand(clanTag) {
     return await CommandLogger.logCommand('cwl-scores', async () => {
       const date = DateUtils.getCurrentDateString();
-      
+
       // Get war league data and scores only
       const { wars } = await this.clanService.getCWLData(clanTag);
       const warLeagueScores = this.clanService.calculateWarLeagueScores(wars, clanTag);
 
       return warLeagueScores;
+    });
+  }
+
+  async handleWarScoresCommand(clanTag) {
+    return await CommandLogger.logCommand('war-scores', async () => {
+      const date = DateUtils.getCurrentDateString();
+
+      // Get current war data and scores only
+      const currentWar = await this.clanService.getCurrentWar(clanTag);
+      const warScores = this.clanService.calculateRegularWarScores(currentWar, clanTag);
+
+      return warScores;
     });
   }
 
