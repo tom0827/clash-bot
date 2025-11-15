@@ -37,6 +37,11 @@ export class EmbedBuilderService {
           inline: false,
         },
         {
+          name: "/update-scores",
+          value: "Update and save all clan scores to files",
+          inline: false,
+        },
+        {
           name: "/help",
           value: "Show this help message",
           inline: false,
@@ -167,7 +172,7 @@ export class EmbedBuilderService {
             (player, idx) =>
               `${i + idx + 1}. **${player.name}**: ${
                 player.totalStars
-              }⭐ (${player.totalAttacks} attacks) - ${player.score} pts`
+              }⭐ (${player.totalAttacks} ATKs) - ${player.score} pts`
           )
           .join("\n");
 
@@ -184,6 +189,41 @@ export class EmbedBuilderService {
         inline: false,
       });
     }
+
+    return embed;
+  }
+
+  createUpdateScoreEmbed(updateData) {
+    const embed = new EmbedBuilder()
+      .setColor("#00ff00")
+      .setTitle("📊 Scores Updated Successfully")
+      .setDescription(`All clan scores have been updated on ${updateData.date}`)
+      .setTimestamp();
+
+    let statusMessage = "";
+    let successCount = 0;
+
+    updateData.files.forEach(file => {
+      if (file.filename) {
+        statusMessage += `✅ **${file.type.toUpperCase()}**: ${file.count} players saved\n`;
+        successCount++;
+      } else {
+        statusMessage += `⚠️ **${file.type.toUpperCase()}**: ${file.error}\n`;
+      }
+    });
+
+    embed.addFields(
+      {
+        name: "📈 Update Status",
+        value: statusMessage,
+        inline: false,
+      },
+      {
+        name: "📁 Files Created",
+        value: `${successCount}/${updateData.files.length} score files saved to /scores directory`,
+        inline: false,
+      }
+    );
 
     return embed;
   }

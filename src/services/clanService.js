@@ -99,8 +99,9 @@ export class ClanService {
     //   throw new Error(`War is in ${war.state} state. Scores are only available for ended wars.`);
     // }
 
-    // Determine which side of the war our clan is on
-    const ourClan = war.clan.tag === clanTag ? war.clan : war.opponent;
+    // Determine which side of the war our clan is on. Database only contains the 
+    // side which is our side so other will be undefined.
+    const ourClan = war.clan || war.opponent;
     const memberDataMap = new Map();
 
     // Process our clan members

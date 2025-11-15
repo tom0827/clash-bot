@@ -21,10 +21,12 @@ export class CocApiClient {
         Accept: "application/json",
       },
     });
-  
+
     if (!response.ok) {
       const text = await response.text();
-      const error = new Error(`API error: ${response.status} [${response.statusText}]`);
+      const error = new Error(
+        `API error: ${response.status} [${response.statusText}]`
+      );
       error.status = response.status;
       error.body = text;
       throw error;
@@ -52,6 +54,13 @@ export class CocApiClient {
     return this.makeRequest(`/clans/${encodeURIComponent(clanTag)}/currentwar`);
   }
 
+  /**
+   * Fetches the current CWL (Clan War League) group for the specified clan.
+   * Will return 404 if no current CWL group.
+   *
+   * @param clanTag - The tag of the clan to fetch the CWL group for.
+   * @returns The CWL group data or throws if not found.
+   */
   async fetchCWLGroup(clanTag) {
     return this.makeRequest(
       `/clans/${encodeURIComponent(clanTag)}/currentwar/leaguegroup`

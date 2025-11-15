@@ -19,6 +19,8 @@
   "description": "Discord bot for Clash of Clans clan participation scoring",
   "dependencies": {
     "discord.js": "^14.24.2",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "mongodb": "^7.0.0",
+    "node-cron": "^4.2.1"
   }
 }
