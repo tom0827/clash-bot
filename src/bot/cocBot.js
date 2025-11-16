@@ -16,7 +16,7 @@ export class CocBot {
     this.clanService = new ClanService();
   }
 
-  async handleDonationScoresCommand(clanTag) {
+  async handleDonationScoresCommand() {
     return await CommandLogger.logCommand("donation-scores", async () => {
       // Get clan data and calculate donation scores only
       const { data } = await clanHistoryService.findOne(
@@ -31,7 +31,7 @@ export class CocBot {
     });
   }
 
-  async handleRaidScoresCommand(clanTag) {
+  async handleRaidScoresCommand() {
     return await CommandLogger.logCommand("raid-scores", async () => {
       // Get capital raid data and scores only
       const { data } = await clanCapitalAttackHistoryService.findOne(

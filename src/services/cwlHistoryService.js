@@ -1,8 +1,8 @@
-import getDb from '../database/database.js';
+import getDb from "../database/database.js";
 
 class CwlHistoryService {
   constructor() {
-    this.collectionName = 'cwl_history';
+    this.collectionName = "cwl_history";
   }
 
   async getCollection() {
@@ -36,9 +36,9 @@ class CwlHistoryService {
     return result;
   }
 
-  async findOne(query) {
+  async findOne(query = {}, options = {}) {
     const collection = await this.getCollection();
-    return await collection.findOne(query);
+    return await collection.findOne(query, options);
   }
 }
 

@@ -34,9 +34,9 @@ class WarHistoryService {
     return result;
   }
 
-  async findOne(query = {}) {
+  async findOne(query = {}, options = {}) {
     const collection = await this.getCollection();
-    return await collection.findOne(query);
+    return await collection.findOne(query, options);
   }
 }
 
