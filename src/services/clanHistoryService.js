@@ -1,4 +1,5 @@
 import getDb from "../database/database.js";
+import { DateUtils } from "../utils/dateUtils.js";
 
 class ClanHistoryService {
   constructor() {
@@ -18,7 +19,7 @@ class ClanHistoryService {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    const filter = { date: today }; // We'll store the date-only part
+    const filter = { month: DateUtils.currentMonthIndex() };
 
     const update = {
       $set: {

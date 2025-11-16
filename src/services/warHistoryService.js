@@ -13,7 +13,9 @@ class WarHistoryService {
   async updateOrCreate(warHistoryData) {
     const collection = await this.getCollection();
 
-    const filter = { date: warHistoryData.startTime }; // We'll store the date-only part
+    const filter = {
+      date: warHistoryData.startTime,
+    };
 
     const update = {
       $set: {
