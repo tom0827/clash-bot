@@ -69,13 +69,4 @@ export class DiscordBot {
   async stop() {
     await this.client.destroy();
   }
-
-  async sendMessageToChannel(channelId, content) {
-    const channel = await this.client.channels.fetch(channelId);
-    if (channel && channel.isTextBased && channel.isTextBased()) {
-      await channel.send(content);
-    } else {
-      throw new Error("Channel not found or is not a text-based channel");
-    }
-  }
 }

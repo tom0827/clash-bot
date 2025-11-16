@@ -4,7 +4,6 @@ import { updateScoresForClan } from "./utils/updateScoresHelper.js";
 import getDb from "./database/database.js";
 
 const CLAN_TAG = process.env.CLAN_TAG;
-const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 
 const main = async () => {
   console.log("🚀 Starting CoC Discord Bot...");
@@ -18,15 +17,7 @@ const main = async () => {
       try {
         const now = new Date().toISOString();
         console.log("Cron job started at: ", now);
-        await bot.sendMessageToChannel(
-          DISCORD_CHANNEL_ID,
-          "🔄 Automatic update started at: " + now
-        );
         await updateScoresForClan(CLAN_TAG);
-        await bot.sendMessageToChannel(
-          DISCORD_CHANNEL_ID,
-          "✅ Completed at: " + now
-        );
         console.log("Cron job completed at:", now);
       } catch (err) {
         console.error("⚠️ Error in scheduled task:", err);

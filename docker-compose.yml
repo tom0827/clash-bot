@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  discord-bot:
+      build: .
+      image: tom0827/clash-bot:latest
+      depends_on:
+        - mongodb
+      env_file:
+        - .env
+      restart: unless-stopped
+
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -12,14 +21,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-
-  discord-bot:
-    build: .
-    depends_on:
-      - mongodb
-    env_file:
-      - .env
-    restart: unless-stopped
 
 volumes:
   mongodb_data:
