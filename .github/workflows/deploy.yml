@@ -41,5 +41,5 @@ jobs:
         ssh -T -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
         cd /home/clash-bot
         sudo docker pull ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
-        sudo docker-compose down || true
-        sudo docker-compose up -d
+        sudo docker compose down || true
+        sudo docker compose up -d
