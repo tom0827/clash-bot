@@ -27,7 +27,6 @@ jobs:
 
     - name: SSH into server and start container
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VPS_HOST: ${{ secrets.VPS_HOST }}
         VPS_USER: ${{ secrets.VPS_USER }}
@@ -36,10 +35,7 @@ jobs:
         chmod 600 ssh_key
 
         ssh -T -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
-        sudo docker pull $DOCKER_USERNAME/clash-bot:latest
+        sudo docker pull ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
         sudo docker stop clash-bot || true
         sudo docker rm clash-bot || true
-        sudo docker run -d --name clash-bot $DOCKER_USERNAME/clash-bot:latest
-        EOF
-
-        rm -f ssh_key
+        sudo docker run --env-file /home/clash-bot/.env -d --name clash-bot ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
