@@ -4,6 +4,7 @@ services:
   discord-bot:
       build: .
       image: tom0827/clash-bot:latest
+      container_name: clash-bot
       depends_on:
         - mongodb
       env_file:

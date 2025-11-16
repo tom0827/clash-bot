@@ -25,7 +25,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
 
-    - name: SSH into server and start container
+    - name: Copy docker-compose and deploy to VPS
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -34,8 +34,12 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ssh_key
         chmod 600 ssh_key
 
+        # Copy docker-compose.yml to VPS
+        scp -i ssh_key -o StrictHostKeyChecking=no docker-compose.yml $VPS_USER@$VPS_HOST:/home/clash-bot/
+
+        # SSH and deploy with docker-compose
         ssh -T -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+        cd /home/clash-bot
         sudo docker pull ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
-        sudo docker stop clash-bot || true
-        sudo docker rm clash-bot || true
-        sudo docker run --env-file /home/clash-bot/.env -d --name clash-bot ${{ secrets.DOCKER_USERNAME }}/clash-bot:latest
+        sudo docker-compose down || true
+        sudo docker-compose up -d
