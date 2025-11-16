@@ -14,11 +14,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Set up Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker.io docker-compose
-
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
@@ -42,6 +37,6 @@ jobs:
         ssh -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
 
         cd /home/clash-bot
-        sudo docker compose pull
-        sudo docker compose up -d
+        sudo docker-compose pull
+        sudo docker-compose up -d
         EOF
