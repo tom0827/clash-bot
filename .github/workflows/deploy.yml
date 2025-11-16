@@ -27,6 +27,7 @@ jobs:
 
     - name: SSH into server and start container
       env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VPS_HOST: ${{ secrets.VPS_HOST }}
         VPS_USER: ${{ secrets.VPS_USER }}
