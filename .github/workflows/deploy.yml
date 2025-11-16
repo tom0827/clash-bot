@@ -34,11 +34,11 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ssh_key
         chmod 600 ssh_key
 
-        ssh -tt -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
-
-        cd /home/clash-bot
-        sudo docker compose pull
-        sudo docker compose up -d
+        ssh -T -i ssh_key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+        sudo docker pull $DOCKER_USERNAME/clash-bot:latest
+        sudo docker stop clash-bot || true
+        sudo docker rm clash-bot || true
+        sudo docker run -d --name clash-bot $DOCKER_USERNAME/clash-bot:latest
         EOF
 
         rm -f ssh_key
