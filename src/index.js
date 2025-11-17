@@ -23,7 +23,7 @@ const main = async () => {
         const vancouverTime = new Date().toLocaleString("en-US", {
           timeZone: "America/Vancouver",
         });
-        bot.sendMessage(CHANNEL_ID, "✅ Update complete: " + vancouverTime);
+        bot.sendMessage(CHANNEL_ID, "✅ Update complete: " + vancouverTime + " PST");
         console.log("Cron job completed at:", now);
       } catch (err) {
         console.error("⚠️ Error in scheduled task:", err);
