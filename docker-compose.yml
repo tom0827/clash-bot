@@ -1,5 +1,5 @@
 services:
-  discord-bot:
+  clash-bot:
       build: .
       image: tom0827/clash-bot:latest
       container_name: clash-bot
