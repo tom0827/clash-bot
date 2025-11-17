@@ -37,6 +37,11 @@ export class EmbedBuilderService {
           inline: false,
         },
         {
+          name: "/war-history",
+          value: "Get historical war data for the clan",
+          inline: false,
+        },
+        {
           name: "/update-scores",
           value: "Update and save all clan scores to files",
           inline: false,
@@ -224,6 +229,53 @@ export class EmbedBuilderService {
         inline: false,
       }
     );
+
+    return embed;
+  }
+
+  createWarHistoryEmbed(warHistoryData) {
+    const embed = new EmbedBuilder()
+      .setColor("#ff6600")
+      .setTitle("📜 War History")
+      .setTimestamp();
+
+    if (warHistoryData.length > 0) {
+      // Limit to most recent 10 wars for readability
+      const recentWars = warHistoryData.slice(0, 10);
+      
+      let historyText = recentWars
+        .map((war, idx) => {
+          const dateStr = war.date instanceof Date ? 
+            war.date.toLocaleDateString() : 
+            new Date(war.date).toLocaleDateString();
+          
+          const stateEmoji = war.state === 'won' ? '🏆' : war.state === 'lost' ? '💀' : '⚖️';
+          
+          return `${stateEmoji} **${war.state.toUpperCase()}** (${dateStr})
+⚔️ Attacks: ${war.clanAttacks} | ⭐ Stars: ${war.clanStars} | 💥 Destruction: ${war.destructionPercentage}%`;
+        })
+        .join("\n\n");
+
+      embed.addFields({
+        name: `📊 Recent Wars (${recentWars.length})`,
+        value: historyText,
+        inline: false,
+      });
+
+      if (warHistoryData.length > 10) {
+        embed.addFields({
+          name: "📈 Total Records",
+          value: `Showing 10 most recent wars out of ${warHistoryData.length} total`,
+          inline: false,
+        });
+      }
+    } else {
+      embed.addFields({
+        name: "📊 Status",
+        value: "No war history data available",
+        inline: false,
+      });
+    }
 
     return embed;
   }

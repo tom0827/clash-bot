@@ -38,6 +38,11 @@ class WarHistoryService {
     const collection = await this.getCollection();
     return await collection.findOne(query, options);
   }
+
+  async findAll(query = {}, options = {}) {
+    const collection = await this.getCollection();
+    return await collection.find(query, options).toArray();
+  }
 }
 
 export default new WarHistoryService();

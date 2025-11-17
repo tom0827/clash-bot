@@ -85,6 +85,27 @@ export class CocBot {
     });
   }
 
+  async handleWarHistoryCommand() {
+    return await CommandLogger.logCommand("war-history", async () => {
+      // Get all war history data
+      const warHistoryData = await warHistoryService.findAll(
+        {},
+        { sort: { createdAt: -1 } } // Most recent first
+      );
+
+      // Format the war history data for display
+      const formattedHistory = warHistoryData.map(war => ({
+        state: war.data?.state || 'Unknown',
+        clanAttacks: war.data?.clan?.attacks || 0,
+        clanStars: war.data?.clan?.stars || 0,
+        destructionPercentage: war.data?.clan?.destructionPercentage || 0,
+        date: war.createdAt || new Date(war.data?.startTime || 0)
+      }));
+
+      return formattedHistory;
+    });
+  }
+
   formatScoreResponse(donationScores, capitalRaidScores, warLeagueScores) {
     let response = "**Clan Scores**\n\n";
 

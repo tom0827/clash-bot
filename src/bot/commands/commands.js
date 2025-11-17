@@ -29,6 +29,10 @@ export class Commands {
         .setDescription("Update and save all clan scores to files"),
 
       new SlashCommandBuilder()
+        .setName("war-history")
+        .setDescription("Get historical war data for the clan"),
+
+      new SlashCommandBuilder()
         .setName("help")
         .setDescription("Show help information and commands"),
     ];
