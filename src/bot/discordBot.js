@@ -69,4 +69,18 @@ export class DiscordBot {
   async stop() {
     await this.client.destroy();
   }
+
+  async sendMessage(channelId, message) {
+    try {
+      const channel = await this.client.channels.fetch(channelId);
+      if (!channel || typeof channel.send !== "function") {
+        console.error("❌ Invalid channel object:", channel);
+        throw new Error("Passed value is not a Discord text channel.");
+      }
+      await channel.send(message);
+    } catch (error) {
+      console.error("❌ Error sending message:", error);
+      throw new Error("Failed to send message to Discord channel.");
+    }
+  }
 }

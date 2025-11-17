@@ -4,6 +4,7 @@ import { updateScoresForClan } from "./utils/updateScoresHelper.js";
 import getDb from "./database/database.js";
 
 const CLAN_TAG = process.env.CLAN_TAG;
+const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
 
 const main = async () => {
   console.log("🚀 Starting CoC Discord Bot...");
@@ -17,7 +18,12 @@ const main = async () => {
       try {
         const now = new Date().toISOString();
         console.log("Cron job started at: ", now);
+        bot.sendMessage(CHANNEL_ID, "⏱️ Scheduled score update started.");
         await updateScoresForClan(CLAN_TAG);
+        const vancouverTime = new Date().toLocaleString("en-US", {
+          timeZone: "America/Vancouver",
+        });
+        bot.sendMessage(CHANNEL_ID, "✅ Update complete: " + vancouverTime);
         console.log("Cron job completed at:", now);
       } catch (err) {
         console.error("⚠️ Error in scheduled task:", err);
