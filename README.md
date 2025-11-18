@@ -8,6 +8,8 @@ A Discord bot for tracking Clash of Clans clan participation and scoring with em
 - **💰 Donation Scoring**: Calculate scores based on clan member donations
 - **🏛️ Capital Raid Scoring**: Score members based on capital raid performance
 - **⚔️ War League Scoring**: Comprehensive scoring for clan war league performance
+- **🛡️ Regular War Scoring**: Score members based on regular war performance
+- **🏆 Monthly Leaderboard**: Combined scoring across all categories for the current month
 
 ## 🛠️ Setup Instructions
 
@@ -59,6 +61,10 @@ A Discord bot for tracking Clash of Clans clan participation and scoring with em
 - `/cwl-scores` - Get most recent Clan War League scores
 - `/donation-scores` - Get donation scores for this current season
 - `/raid-scores` - Get raid scores for most recent Clan Capital raid
+- `/war-scores` - Get scores for the current regular war
+- `/leaderboard` - Get combined leaderboard summing all category scores for this month
+- `/war-history` - Get historical war data for the clan
+- `/update-scores` - Update and save all clan scores to files
 - `/help` - Show help information and commands
 
 ## 🎮 Usage Examples
@@ -94,3 +100,15 @@ A Discord bot for tracking Clash of Clans clan participation and scoring with em
 - 2+ avg stars + 60%+ destruction: 15 points
 - 2+ avg stars + 50%+ destruction: 15 points
 - 1+ avg stars: 5 points
+
+### Regular Wars
+- 6 stars (perfect): 3 points
+- 4-5 stars: 2 points
+- 2-3 stars: 1 point
+
+### Monthly Leaderboard
+The leaderboard combines scores from:
+- All donation activity for the current month
+- All raid activity for the current month
+- All CWL activity for the current month
+- All regular war activity for the current month

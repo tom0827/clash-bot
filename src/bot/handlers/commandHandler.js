@@ -34,6 +34,9 @@ export class CommandHandler {
       case "help":
         await this.handleHelpCommand(interaction);
         break;
+      case "leaderboard":
+        await this.handleLeaderboardCommand(interaction);
+        break;
       default:
         await interaction.reply({
           content: "Unknown command!",
@@ -198,6 +201,34 @@ export class CommandHandler {
       }
 
       const embed = this.embedBuilder.createWarHistoryEmbed(result);
+      await interaction.editReply({ embeds: [embed] });
+    } catch (error) {
+      await interaction.editReply({ content: `Error: ${error.message}` });
+    }
+  }
+
+  async handleLeaderboardCommand(interaction) {
+    const clanTag = process.env.CLAN_TAG;
+
+    if (!clanTag) {
+      await interaction.reply({
+        content: "Error: CLAN_TAG not configured in environment variables.",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    await interaction.deferReply();
+
+    try {
+      const result = await this.cocBot.handleLeaderboardCommand(clanTag);
+
+      if (typeof result === "string" && result.startsWith("Error")) {
+        await interaction.editReply({ content: result });
+        return;
+      }
+
+      const embed = this.embedBuilder.createLeaderboardEmbed(result);
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       await interaction.editReply({ content: `Error: ${error.message}` });

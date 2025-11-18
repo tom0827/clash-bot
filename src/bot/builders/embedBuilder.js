@@ -50,6 +50,11 @@ export class EmbedBuilderService {
           name: "/help",
           value: "Show this help message",
           inline: false,
+        },
+        {
+          name: "/leaderboard",
+          value: "Get combined leaderboard summing all category scores for this month",
+          inline: false,
         }
       );
   }
@@ -273,6 +278,59 @@ export class EmbedBuilderService {
       embed.addFields({
         name: "📊 Status",
         value: "No war history data available",
+        inline: false,
+      });
+    }
+
+    return embed;
+  }
+
+  createLeaderboardEmbed(leaderboardData) {
+    const embed = new EmbedBuilder()
+      .setColor("#FFD700")
+      .setTitle("🏆 Monthly Leaderboard")
+      .setDescription("Combined scores from all categories for this month")
+      .setTimestamp();
+
+    if (leaderboardData.length > 0) {
+      // Show top performers
+      for (let i = 0; i < Math.min(leaderboardData.length, 15); i += this.CHUNK_SIZE) {
+        const chunk = leaderboardData.slice(i, i + this.CHUNK_SIZE);
+        let leaderboardText = chunk
+          .map((player, idx) => {
+            const rank = i + idx + 1;
+            const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}.`;
+            
+            let breakdown = [];
+            if (player.breakdown.donations > 0) breakdown.push(`💰${player.breakdown.donations}`);
+            if (player.breakdown.raids > 0) breakdown.push(`🏛️${player.breakdown.raids}`);
+            if (player.breakdown.cwl > 0) breakdown.push(`⚔️${player.breakdown.cwl}`);
+            if (player.breakdown.wars > 0) breakdown.push(`🛡️${player.breakdown.wars}`);
+            
+            const breakdownText = breakdown.length > 0 ? ` (${breakdown.join(" + ")})` : '';
+            
+            return `${medal} **${player.name}**: ${player.totalScore} pts${breakdownText}`;
+          })
+          .join("\n");
+
+        embed.addFields({
+          name: i === 0 ? "🏆 Top Players" : `📊 Players ${i + 1} - ${i + chunk.length}`,
+          value: leaderboardText,
+          inline: false,
+        });
+      }
+
+      // Add category breakdown legend
+      embed.addFields({
+        name: "📋 Score Categories",
+        value: "💰 Donations | 🏛️ Raids | ⚔️ CWL | 🛡️ Wars",
+        inline: false,
+      });
+
+    } else {
+      embed.addFields({
+        name: "📊 Status",
+        value: "No data available for this month",
         inline: false,
       });
     }

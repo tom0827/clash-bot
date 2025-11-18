@@ -35,6 +35,10 @@ export class Commands {
       new SlashCommandBuilder()
         .setName("help")
         .setDescription("Show help information and commands"),
+
+      new SlashCommandBuilder()
+        .setName("leaderboard")
+        .setDescription("Get combined leaderboard summing all category scores for this month"),
     ];
   }
 }

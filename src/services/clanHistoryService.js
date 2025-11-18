@@ -19,7 +19,7 @@ class ClanHistoryService {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    const filter = { month: DateUtils.currentMonthIndex() };
+    const filter = { month: DateUtils.currentMonthIndexInEastern() };
 
     const update = {
       $set: {
