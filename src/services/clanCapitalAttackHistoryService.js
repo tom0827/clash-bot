@@ -1,4 +1,5 @@
 import getDb from "../database/database.js";
+import { DateUtils } from "../utils/dateUtils.js";
 
 class ClanCapitalAttackHistoryService {
   constructor() {
@@ -14,7 +15,7 @@ class ClanCapitalAttackHistoryService {
   async updateOrCreate(clanCapitalAttackData) {
     const collection = await this.getCollection();
 
-    const filter = { date: clanCapitalAttackData.startTime }; // We'll store the date-only part
+    const filter = { date: DateUtils.toExtendedISO(clanCapitalAttackData.startTime) };
 
     const update = {
       $set: {

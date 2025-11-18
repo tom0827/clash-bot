@@ -17,7 +17,7 @@ class CwlHistoryService {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    const filter = { date: today }; // We'll store the date-only part
+    // const filter = { date: today }; // We'll store the date-only part
 
     const update = {
       $set: {

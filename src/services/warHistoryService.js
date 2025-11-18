@@ -1,4 +1,5 @@
 import getDb from "../database/database.js";
+import { DateUtils } from "../utils/dateUtils.js";
 
 class WarHistoryService {
   constructor() {
@@ -14,7 +15,7 @@ class WarHistoryService {
     const collection = await this.getCollection();
 
     const filter = {
-      date: warHistoryData.startTime,
+      date: DateUtils.toExtendedISO(warHistoryData.startTime),
     };
 
     const update = {
