@@ -25,9 +25,6 @@ export class CommandHandler {
       case "war-scores":
         await this.handleWarScoresCommand(interaction);
         break;
-      case "update-scores":
-        await this.handleUpdateScoresCommand(interaction);
-        break;
       case "war-history":
         await this.handleWarHistoryCommand(interaction);
         break;
@@ -160,33 +157,6 @@ export class CommandHandler {
   async handleHelpCommand(interaction) {
     const embed = this.embedBuilder.createHelpEmbed();
     await interaction.reply({ embeds: [embed] });
-  }
-
-  async handleUpdateScoresCommand(interaction) {
-    const clanTag = process.env.CLAN_TAG;
-
-    if (!clanTag) {
-      await interaction.reply({
-        content: "Error: CLAN_TAG not configured in environment variables.",
-        ephemeral: true,
-      });
-      return;
-    }
-
-    await interaction.deferReply();
-
-    try {
-      const result = await this.cocBot.handleUpdateScoresCommand(clanTag);
-
-      if (typeof result === "string" && result.startsWith("Error")) {
-        await interaction.editReply({ content: result });
-        return;
-      }
-
-      await interaction.editReply({ content: "Scores updated successfully." });
-    } catch (error) {
-      await interaction.editReply({ content: `Error: ${error.message}` });
-    }
   }
 
   async handleWarHistoryCommand(interaction) {

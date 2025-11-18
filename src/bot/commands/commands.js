@@ -25,10 +25,6 @@ export class Commands {
         .setDescription("Get scores for the current regular war"),
 
       new SlashCommandBuilder()
-        .setName("update-scores")
-        .setDescription("Update and save all clan scores to files"),
-
-      new SlashCommandBuilder()
         .setName("war-history")
         .setDescription("Get historical war data for the clan"),
 
