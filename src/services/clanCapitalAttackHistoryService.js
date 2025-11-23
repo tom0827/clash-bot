@@ -38,6 +38,11 @@ class ClanCapitalAttackHistoryService {
     const collection = await this.getCollection();
     return await collection.findOne(query, options);
   }
+
+  async find(query = {}, options = {}) {
+    const collection = await this.getCollection();
+    return await collection.find(query, options).toArray();
+  }
 }
 
 export default new ClanCapitalAttackHistoryService();

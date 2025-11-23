@@ -34,7 +34,17 @@ export class Commands {
 
       new SlashCommandBuilder()
         .setName("leaderboard")
-        .setDescription("Get combined leaderboard summing all category scores for this month"),
+        .setDescription("Get combined leaderboard summing all category scores")
+        .addIntegerOption(option =>
+          option.setName('year')
+            .setDescription('Year (e.g., 2024)')
+            .setRequired(false))
+        .addIntegerOption(option =>
+          option.setName('month')
+            .setDescription('Month (1-12)')
+            .setRequired(false)
+            .setMinValue(1)
+            .setMaxValue(12)),
     ];
   }
 }

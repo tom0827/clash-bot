@@ -21,12 +21,17 @@ export class CocBot {
   async handleDonationScoresCommand() {
     return await CommandLogger.logCommand("donation-scores", async () => {
       // Get clan data and calculate donation scores only
-      const { data } = await clanHistoryService.findOne(
+      const result = await clanHistoryService.findOne(
         {},
         { sort: { createdAt: -1 } } // Most recent entry
       );
+
+      if (!result || !result.data) {
+        return "Error: No donation data available";
+      }
+
       const donationScores = this.clanService.calculateDonationScores(
-        data.memberList
+        result.data.memberList
       );
 
       return donationScores;
@@ -37,12 +42,18 @@ export class CocBot {
   async handleRaidScoresCommand() {
     return await CommandLogger.logCommand("raid-scores", async () => {
       // Get capital raid data and scores only
-      const { data } = await clanCapitalAttackHistoryService.findOne(
+      const result = await clanCapitalAttackHistoryService.findOne(
         {},
         { sort: { createdAt: -1 } } // Most recent entry
       );
-      const capitalRaidScores =
-        this.clanService.calculateCapitalRaidScores(data);
+
+      if (!result || !result.data) {
+        return "Error: No raid data available";
+      }
+
+      const capitalRaidScores = this.clanService.calculateCapitalRaidScores(
+        result.data
+      );
 
       return capitalRaidScores;
     });
@@ -65,12 +76,17 @@ export class CocBot {
   async handleWarScoresCommand(clanTag) {
     return await CommandLogger.logCommand("war-scores", async () => {
       // Get current war data and scores only
-      const { data } = await warHistoryService.findOne(
+      const result = await warHistoryService.findOne(
         {},
         { sort: { createdAt: -1 } } // Most recent entry
       );
+
+      if (!result || !result.data) {
+        return "Error: No war data available";
+      }
+
       const warScores = this.clanService.calculateRegularWarScores(
-        data,
+        result.data,
         clanTag
       );
 
@@ -110,13 +126,31 @@ export class CocBot {
     });
   }
 
-  async handleLeaderboardCommand(clanTag) {
+  async handleLeaderboardCommand(clanTag, year, month) {
     return await CommandLogger.logCommand("leaderboard", async () => {
-      // Get current month data for all categories
-      const donationScores = await this._getCurrentMonthDonationScores();
-      const raidScores = await this._getCurrentMonthRaidScores();
-      const cwlScores = await this._getCurrentMonthCWLScores(clanTag);
-      const warScores = await this._getCurrentMonthWarScores(clanTag);
+      // Use provided year/month or default to current month
+      const targetYear = year || new Date().getFullYear();
+      const targetMonth = month || DateUtils.currentMonthIndexInEastern();
+
+      // Get data for specified month/year for all categories
+      const donationScores = await this._getMonthDonationScores(
+        targetYear,
+        targetMonth
+      );
+      const raidScores = await this._getMonthRaidScores(
+        targetYear,
+        targetMonth
+      );
+      const cwlScores = await this._getMonthCWLScores(
+        clanTag,
+        targetYear,
+        targetMonth
+      );
+      const warScores = await this._getMonthWarScores(
+        clanTag,
+        targetYear,
+        targetMonth
+      );
 
       // Combine all scores by player
       const leaderboard = this._combineAllScores(
@@ -126,33 +160,16 @@ export class CocBot {
         warScores
       );
 
-      return leaderboard;
+      return { leaderboard, year: targetYear, month: targetMonth };
     });
   }
 
-  async _getCurrentMonthDonationScores() {
-    const currentMonth = DateUtils.currentMonthIndexInEastern();
-    const { data } = await clanHistoryService.findOne(
-      { month: currentMonth },
-      { sort: { createdAt: -1 } }
-    );
-
-    if (!data) return [];
-
-    return this.clanService.calculateDonationScores(data.memberList);
-  }
-
-  async _getCurrentMonthRaidScores() {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = DateUtils.currentMonthIndexInEastern();
-
-    // Get raids from current month
-    const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
-    const endOfMonth = new Date(currentYear, currentMonth, 0, 23, 59, 59);
-
-    const raidData = await clanCapitalAttackHistoryService.findOne(
+  async _getMonthDonationScores(year, month) {
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0, 23, 59, 59);
+    const result = await clanHistoryService.findOne(
       {
-        createdAt: {
+        date: {
           $gte: startOfMonth,
           $lte: endOfMonth,
         },
@@ -160,18 +177,52 @@ export class CocBot {
       { sort: { createdAt: -1 } }
     );
 
-    if (!raidData || !raidData.data) return [];
+    if (!result || !result.data) return [];
 
-    return this.clanService.calculateCapitalRaidScores(raidData.data);
+    return this.clanService.calculateDonationScores(result.data.memberList);
   }
 
-  async _getCurrentMonthCWLScores(clanTag) {
-    try {
-      const currentMonth = DateUtils.currentMonthIndexInEastern();
-      const currentYear = new Date().getFullYear();
+  async _getMonthRaidScores(year, month) {
+    // Get raids from specified month
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0, 23, 59, 59);
 
-      const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
-      const endOfMonth = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+    const raidData = await clanCapitalAttackHistoryService.find(
+      {
+        date: {
+          $gte: startOfMonth,
+          $lte: endOfMonth,
+        },
+      },
+      { sort: { createdAt: -1 } }
+    );
+
+    if (!raidData || raidData.length === 0) return [];
+
+    const scores = raidData.map((raid) =>
+      this.clanService.calculateCapitalRaidScores(raid.data)
+    ).flat();
+
+    // Combine scores by player tag
+    const combinedScores = {};
+    scores.forEach((player) => {
+      if (!combinedScores[player.tag]) {
+        combinedScores[player.tag] = { ...player };
+      } else {
+        combinedScores[player.tag].score += player.score;
+        if (player.capitalResourcesLooted !== undefined) {
+          combinedScores[player.tag].capitalResourcesLooted += player.capitalResourcesLooted;
+        }
+      }
+    });
+
+    return Object.values(combinedScores);
+  }
+
+  async _getMonthCWLScores(clanTag, year, month) {
+    try {
+      const startOfMonth = new Date(year, month - 1, 1);
+      const endOfMonth = new Date(year, month, 0, 23, 59, 59);
 
       const cwlData = await cwlHistoryService.findOne(
         {
@@ -189,18 +240,15 @@ export class CocBot {
       const wars = cwlData.data.wars || cwlData.data;
       return this.clanService.calculateWarLeagueScores(wars, clanTag);
     } catch (error) {
-      console.log("No CWL data found for current month:", error.message);
+      console.log(`No CWL data found for ${year}/${month}:`, error.message);
       return [];
     }
   }
 
-  async _getCurrentMonthWarScores(clanTag) {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = DateUtils.currentMonthIndexInEastern();
-
-    // Get all wars from current month
-    const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
-    const endOfMonth = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+  async _getMonthWarScores(clanTag, year, month) {
+    // Get all wars from specified month
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0, 23, 59, 59);
 
     const wars = await warHistoryService.findAll(
       {

@@ -53,7 +53,7 @@ export class EmbedBuilderService {
         },
         {
           name: "/leaderboard",
-          value: "Get combined leaderboard summing all category scores for this month",
+          value: "Get combined leaderboard summing all category scores (optional year/month parameters)",
           inline: false,
         }
       );
@@ -285,11 +285,20 @@ export class EmbedBuilderService {
     return embed;
   }
 
-  createLeaderboardEmbed(leaderboardData) {
+  createLeaderboardEmbed(data, year, month) {
+    // Handle both old and new data structure
+    const leaderboardData = data.leaderboard || data;
+    const targetYear = year || data.year || new Date().getFullYear();
+    const targetMonth = month || data.month || new Date().getMonth() + 1;
+    
+    const monthNames = ["", "January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"];
+    const monthName = monthNames[targetMonth];
+    
     const embed = new EmbedBuilder()
       .setColor("#FFD700")
       .setTitle("🏆 Monthly Leaderboard")
-      .setDescription("Combined scores from all categories for this month")
+      .setDescription(`Combined scores from all categories for ${monthName} ${targetYear}`)
       .setTimestamp();
 
     if (leaderboardData.length > 0) {
@@ -330,7 +339,7 @@ export class EmbedBuilderService {
     } else {
       embed.addFields({
         name: "📊 Status",
-        value: "No data available for this month",
+        value: `No data available for ${monthName} ${targetYear}`,
         inline: false,
       });
     }

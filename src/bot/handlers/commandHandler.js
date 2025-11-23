@@ -188,17 +188,21 @@ export class CommandHandler {
       return;
     }
 
+    // Extract year and month parameters
+    const year = interaction.options.getInteger('year');
+    const month = interaction.options.getInteger('month');
+
     await interaction.deferReply();
 
     try {
-      const result = await this.cocBot.handleLeaderboardCommand(clanTag);
+      const result = await this.cocBot.handleLeaderboardCommand(clanTag, year, month);
 
       if (typeof result === "string" && result.startsWith("Error")) {
         await interaction.editReply({ content: result });
         return;
       }
 
-      const embed = this.embedBuilder.createLeaderboardEmbed(result);
+      const embed = this.embedBuilder.createLeaderboardEmbed(result, year, month);
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       await interaction.editReply({ content: `Error: ${error.message}` });
