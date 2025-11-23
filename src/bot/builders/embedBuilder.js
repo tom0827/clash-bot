@@ -53,7 +53,8 @@ export class EmbedBuilderService {
         },
         {
           name: "/leaderboard",
-          value: "Get combined leaderboard summing all category scores (optional year/month parameters)",
+          value:
+            "Get combined leaderboard summing all category scores (optional year/month parameters)",
           inline: false,
         }
       );
@@ -180,9 +181,9 @@ export class EmbedBuilderService {
         let warScores = chunk
           .map(
             (player, idx) =>
-              `${i + idx + 1}. **${player.name}**: ${
-                player.totalStars
-              }⭐ (${player.totalAttacks} ATKs) - ${player.score} pts`
+              `${i + idx + 1}. **${player.name}**: ${player.totalStars}⭐ (${
+                player.totalAttacks
+              } ATKs) - ${player.score} pts`
           )
           .join("\n");
 
@@ -213,9 +214,11 @@ export class EmbedBuilderService {
     let statusMessage = "";
     let successCount = 0;
 
-    updateData.files.forEach(file => {
+    updateData.files.forEach((file) => {
       if (file.filename) {
-        statusMessage += `✅ **${file.type.toUpperCase()}**: ${file.count} players saved\n`;
+        statusMessage += `✅ **${file.type.toUpperCase()}**: ${
+          file.count
+        } players saved\n`;
         successCount++;
       } else {
         statusMessage += `⚠️ **${file.type.toUpperCase()}**: ${file.error}\n`;
@@ -247,17 +250,21 @@ export class EmbedBuilderService {
     if (warHistoryData.length > 0) {
       // Limit to most recent 10 wars for readability
       const recentWars = warHistoryData.slice(0, 10);
-      
+
       let historyText = recentWars
         .map((war, idx) => {
-          const dateStr = war.date instanceof Date ? 
-            war.date.toLocaleDateString() : 
-            new Date(war.date).toLocaleDateString();
-          
-          const stateEmoji = war.state === 'won' ? '🏆' : war.state === 'lost' ? '💀' : '⚖️';
-          
+          const dateStr =
+            war.date instanceof Date
+              ? war.date.toLocaleDateString()
+              : new Date(war.date).toLocaleDateString();
+
+          const stateEmoji =
+            war.state === "won" ? "🏆" : war.state === "lost" ? "💀" : "⚖️";
+
           return `${stateEmoji} **${war.state.toUpperCase()}** (${dateStr})
-⚔️ Attacks: ${war.clanAttacks} | ⭐ Stars: ${war.clanStars} | 💥 Destruction: ${war.destructionPercentage}%`;
+⚔️ Attacks: ${war.clanAttacks} | ⭐ Stars: ${war.clanStars} | 💥 Destruction: ${
+            war.destructionPercentage
+          }%`;
         })
         .join("\n\n");
 
@@ -290,40 +297,69 @@ export class EmbedBuilderService {
     const leaderboardData = data.leaderboard || data;
     const targetYear = year || data.year || new Date().getFullYear();
     const targetMonth = month || data.month || new Date().getMonth() + 1;
-    
-    const monthNames = ["", "January", "February", "March", "April", "May", "June",
-                       "July", "August", "September", "October", "November", "December"];
+
+    const monthNames = [
+      "",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
     const monthName = monthNames[targetMonth];
-    
+
     const embed = new EmbedBuilder()
       .setColor("#FFD700")
       .setTitle("🏆 Monthly Leaderboard")
-      .setDescription(`Combined scores from all categories for ${monthName} ${targetYear}`)
+      .setDescription(
+        `Combined scores from all categories for ${monthName} ${targetYear}`
+      )
       .setTimestamp();
 
     if (leaderboardData.length > 0) {
-      // Show top performers
-      for (let i = 0; i < Math.min(leaderboardData.length, 15); i += this.CHUNK_SIZE) {
+      for (let i = 0; i < leaderboardData.length; i += this.CHUNK_SIZE) {
         const chunk = leaderboardData.slice(i, i + this.CHUNK_SIZE);
         let leaderboardText = chunk
           .map((player, idx) => {
             const rank = i + idx + 1;
-            const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}.`;
-            
+            const medal =
+              rank === 1
+                ? "🥇"
+                : rank === 2
+                ? "🥈"
+                : rank === 3
+                ? "🥉"
+                : `${rank}.`;
+
             let breakdown = [];
-            if (player.breakdown.donations > 0) breakdown.push(`💰${player.breakdown.donations}`);
-            if (player.breakdown.raids > 0) breakdown.push(`🏛️${player.breakdown.raids}`);
-            if (player.breakdown.cwl > 0) breakdown.push(`⚔️${player.breakdown.cwl}`);
-            if (player.breakdown.wars > 0) breakdown.push(`🛡️${player.breakdown.wars}`);
-            
-            const breakdownText = breakdown.length > 0 ? ` (${breakdown.join(" + ")})` : '';
-            
+            if (player.breakdown.donations > 0)
+              breakdown.push(`💰${player.breakdown.donations}`);
+            if (player.breakdown.raids > 0)
+              breakdown.push(`🏛️${player.breakdown.raids}`);
+            if (player.breakdown.cwl > 0)
+              breakdown.push(`⚔️${player.breakdown.cwl}`);
+            if (player.breakdown.wars > 0)
+              breakdown.push(`🛡️${player.breakdown.wars}`);
+
+            const breakdownText =
+              breakdown.length > 0 ? ` (${breakdown.join(" + ")})` : "";
+
             return `${medal} **${player.name}**: ${player.totalScore} pts${breakdownText}`;
           })
           .join("\n");
 
         embed.addFields({
-          name: i === 0 ? "🏆 Top Players" : `📊 Players ${i + 1} - ${i + chunk.length}`,
+          name:
+            i === 0
+              ? "🏆 Top Players"
+              : `📊 Players ${i + 1} - ${i + chunk.length}`,
           value: leaderboardText,
           inline: false,
         });
@@ -335,7 +371,6 @@ export class EmbedBuilderService {
         value: "💰 Donations | 🏛️ Raids | ⚔️ CWL | 🛡️ Wars",
         inline: false,
       });
-
     } else {
       embed.addFields({
         name: "📊 Status",
