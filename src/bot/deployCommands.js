@@ -10,13 +10,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const deployCommands = async () => {
-  const token = process.env.DISCORD_BOT_TOKEN;
-  const clientId = process.env.DISCORD_CLIENT_ID;
-  const guildId = process.env.DISCORD_GUILD_ID;
+  // const token = process.env.DISCORD_BOT_TOKEN;
+  // const clientId = process.env.DISCORD_CLIENT_ID;
+  // const guildId = process.env.DISCORD_GUILD_ID;
 
-  // const token = process.env.PROD_DISCORD_BOT_TOKEN;
-  // const clientId = process.env.PROD_DISCORD_CLIENT_ID;
-  // const guildId = process.env.PROD_DISCORD_GUILD_ID;
+  const token = process.env.PROD_DISCORD_BOT_TOKEN;
+  const clientId = process.env.PROD_DISCORD_CLIENT_ID;
+  const guildId = process.env.PROD_DISCORD_GUILD_ID;
 
   if (!token || !clientId) {
     console.error(
