@@ -13,6 +13,9 @@ RUN npm ci --only=production
 # Copy the source code
 COPY src/ ./src/
 
+# Copy the scores directory for 2025-11 special case
+COPY scores/ ./scores/
+
 # Create a non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001

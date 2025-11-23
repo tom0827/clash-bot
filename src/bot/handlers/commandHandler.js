@@ -189,8 +189,8 @@ export class CommandHandler {
     }
 
     // Extract year and month parameters
-    const year = interaction.options.getInteger('year');
-    const month = interaction.options.getInteger('month');
+    const year = interaction.options.getInteger("year");
+    const month = interaction.options.getInteger("month");
 
     await interaction.deferReply();
 

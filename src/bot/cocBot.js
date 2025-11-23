@@ -11,10 +11,15 @@ import clanCapitalAttackHistoryService from "../services/clanCapitalAttackHistor
 import warHistoryService from "../services/warHistoryService.js";
 import cwlHistoryService from "../services/cwlHistoryService.js";
 import { updateScoresForClan } from "../utils/updateScoresHelper.js";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 export class CocBot {
   constructor() {
     this.clanService = new ClanService();
+    this.__filename = fileURLToPath(import.meta.url);
+    this.__dirname = dirname(this.__filename);
   }
 
   // Scores for current month donations
@@ -132,6 +137,48 @@ export class CocBot {
       const targetYear = year || new Date().getFullYear();
       const targetMonth = month || DateUtils.currentMonthIndexInEastern();
 
+      // Special case for 2025-11 - add scores from /scores directory
+      let additionalRaidScores = [];
+      let additionalWarScores = [];
+      let additionalCwlScores = [];
+
+      if (targetYear === 2025 && targetMonth === 11) {
+        try {
+          // Load additional scores from files
+          const scoresDir = join(this.__dirname, "../../scores");
+          
+          // Capital raid scores
+          const raidFile = join(scoresDir, "capital_raid_scores_2025-11-11json.json");
+          const raidData = JSON.parse(readFileSync(raidFile, 'utf8'));
+          additionalRaidScores = raidData.map(player => ({
+            tag: player.tag,
+            name: player.name,
+            score: player.score,
+            capitalResourcesLooted: player.capitalResourcesLooted || 0
+          }));
+
+          // War scores
+          const warFile = join(scoresDir, "war_2025-11-13.json");
+          const warData = JSON.parse(readFileSync(warFile, 'utf8'));
+          additionalWarScores = warData.map(player => ({
+            tag: player.tag,
+            name: player.name,
+            totalScore: player.score
+          }));
+
+          // CWL scores
+          const cwlFile = join(scoresDir, "war_league_scores_2025-11-11.json");
+          const cwlData = JSON.parse(readFileSync(cwlFile, 'utf8'));
+          additionalCwlScores = cwlData.map(player => ({
+            tag: player.tag,
+            name: player.name,
+            score: player.score
+          }));
+        } catch (error) {
+          console.log("Warning: Could not load additional scores for 2025-11:", error.message);
+        }
+      }
+
       // Get data for specified month/year for all categories
       const donationScores = await this._getMonthDonationScores(
         targetYear,
@@ -152,12 +199,17 @@ export class CocBot {
         targetMonth
       );
 
+      // Combine database scores with additional scores for 2025-11
+      const combinedRaidScores = [...raidScores, ...additionalRaidScores];
+      const combinedWarScores = [...warScores, ...additionalWarScores];
+      const combinedCwlScores = [...cwlScores, ...additionalCwlScores];
+
       // Combine all scores by player
       const leaderboard = this._combineAllScores(
         donationScores,
-        raidScores,
-        cwlScores,
-        warScores
+        combinedRaidScores,
+        combinedCwlScores,
+        combinedWarScores
       );
 
       return { leaderboard, year: targetYear, month: targetMonth };
@@ -311,7 +363,7 @@ export class CocBot {
 
       existing.totalScore += score;
       existing[category] += score;
-      existing.breakdown[category] = score;
+      existing.breakdown[category] += score;
 
       // Add category-specific details
       if (category === "donations" && details.donations) {
