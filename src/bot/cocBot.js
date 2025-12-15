@@ -146,37 +146,48 @@ export class CocBot {
         try {
           // Load additional scores from files
           const scoresDir = join(this.__dirname, "../../scores");
-          
+
           // Capital raid scores
-          const raidFile = join(scoresDir, "capital_raid_scores_2025-11-11json.json");
-          const raidData = JSON.parse(readFileSync(raidFile, 'utf8'));
-          additionalRaidScores = raidData.map(player => ({
+          const raidFile = join(
+            scoresDir,
+            "capital_raid_scores_2025-11-11json.json"
+          );
+          const raidData = JSON.parse(readFileSync(raidFile, "utf8"));
+          additionalRaidScores = raidData.map((player) => ({
             tag: player.tag,
             name: player.name,
             score: player.score,
-            capitalResourcesLooted: player.capitalResourcesLooted || 0
+            capitalResourcesLooted: player.capitalResourcesLooted || 0,
           }));
 
           // War scores
           const warFile = join(scoresDir, "war_2025-11-13.json");
-          const warData = JSON.parse(readFileSync(warFile, 'utf8'));
-          additionalWarScores = warData.map(player => ({
+          const warData = JSON.parse(readFileSync(warFile, "utf8"));
+          additionalWarScores = warData.map((player) => ({
             tag: player.tag,
             name: player.name,
-            totalScore: player.score
+            totalScore: player.score,
           }));
 
           // CWL scores
           const cwlFile = join(scoresDir, "war_league_scores_2025-11-11.json");
-          const cwlData = JSON.parse(readFileSync(cwlFile, 'utf8'));
-          additionalCwlScores = cwlData.map(player => ({
+          const cwlData = JSON.parse(readFileSync(cwlFile, "utf8"));
+          additionalCwlScores = cwlData.map((player) => ({
             tag: player.tag,
             name: player.name,
-            score: player.score
+            score: player.score,
           }));
         } catch (error) {
-          console.log("Warning: Could not load additional scores for 2025-11:", error.message);
+          console.log(
+            "Warning: Could not load additional scores for 2025-11:",
+            error.message
+          );
         }
+      } else if (targetYear == 2025 && targetMonth === 12) {
+        const scoresDir = join(this.__dirname, "../../scores");
+        // CWL scores
+        const cwlFile = join(scoresDir, "war_league_scores_2025-12.json");
+        additionalCwlScores = JSON.parse(readFileSync(cwlFile, "utf8"));
       }
 
       // Get data for specified month/year for all categories
@@ -251,9 +262,9 @@ export class CocBot {
 
     if (!raidData || raidData.length === 0) return [];
 
-    const scores = raidData.map((raid) =>
-      this.clanService.calculateCapitalRaidScores(raid.data)
-    ).flat();
+    const scores = raidData
+      .map((raid) => this.clanService.calculateCapitalRaidScores(raid.data))
+      .flat();
 
     // Combine scores by player tag
     const combinedScores = {};
@@ -263,7 +274,8 @@ export class CocBot {
       } else {
         combinedScores[player.tag].score += player.score;
         if (player.capitalResourcesLooted !== undefined) {
-          combinedScores[player.tag].capitalResourcesLooted += player.capitalResourcesLooted;
+          combinedScores[player.tag].capitalResourcesLooted +=
+            player.capitalResourcesLooted;
         }
       }
     });
