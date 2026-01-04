@@ -148,7 +148,7 @@ export class EmbedBuilderService {
             (player, idx) =>
               `${i + idx + 1}. **${player.name}**: ${
                 player.totalStars
-              }⭐ AVG: ${player.averageStars} (${player.score} pts)`
+              }⭐ (${player.score} pts)`
           )
           .join("\n");
 

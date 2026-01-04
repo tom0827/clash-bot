@@ -60,20 +60,14 @@ export class ClanService {
   }
 
   calculateWarLeagueScores(wars, clanTag) {
-    const allWarsDone = wars.every((war) => war.state === "warEnded");
-
-    if (!allWarsDone) {
-      throw new Error("Not all wars in the league group have ended yet.");
-    }
-
     const memberDataMap = new Map();
 
     wars
-      .filter((war) => war.clan.tag === clanTag || war.opponent.tag === clanTag)
+      .filter((war) => war?.clan?.tag === clanTag || war?.opponent?.tag === clanTag)
       .forEach((war) => {
-        if (war.clan.tag === clanTag) {
+        if (war?.clan?.tag === clanTag) {
           this._processWarMembers(war.clan.members, memberDataMap);
-        } else if (war.opponent.tag === clanTag) {
+        } else if (war?.opponent?.tag === clanTag) {
           this._processWarMembers(war.opponent.members, memberDataMap);
         }
       });
@@ -90,15 +84,7 @@ export class ClanService {
       .sort((a, b) => b.score - a.score);
   }
 
-  calculateRegularWarScores(war, clanTag) {
-    // if (war.state === "notInWar") {
-    //   throw new Error("Clan is not currently in a war.");
-    // }
-
-    // if (war.state !== "warEnded") {
-    //   throw new Error(`War is in ${war.state} state. Scores are only available for ended wars.`);
-    // }
-
+  calculateRegularWarScores(war) {
     // Determine which side of the war our clan is on. Database only contains the 
     // side which is our side so other will be undefined.
     const ourClan = war.clan || war.opponent;

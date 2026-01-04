@@ -13,9 +13,8 @@ export const updateScoresForClan = async (clanTag) => {
     // Get and save capital raid data
     await updateClanCapitalData(clanService, clanTag);
 
-    // Get and save war league scores
-    // TODO: Enable when ready
-    // await updateClanWarLeagueData(clanService, clanTag);
+    // Get and save war league data
+    await updateClanWarLeagueData(clanService, clanTag);
 
     // Get and save current war data
     await updateCurrentWarData(clanService, clanTag);
@@ -27,7 +26,7 @@ export const updateScoresForClan = async (clanTag) => {
 async function updateClanWarLeagueData(clanService, clanTag) {
   try {
     const { leagueGroup, wars } = await clanService.getCWLData(clanTag);
-    // cwlHistoryService.updateOrCreate(wars);
+    cwlHistoryService.updateOrCreate(leagueGroup.season, wars);
   } catch (cwlError) {
     console.log("CWL data not available:", cwlError.message);
   }

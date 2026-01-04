@@ -67,9 +67,13 @@ export class CocBot {
   async handleCWLScoresCommand(clanTag) {
     return await CommandLogger.logCommand("cwl-scores", async () => {
       // Get war league data and scores only
-      const { wars } = await this.clanService.getCWLData(clanTag);
+      const result = await cwlHistoryService.findOne(
+        {},
+        { sort: { createdAt: -1 } } // Most recent entry
+      );
+
       const warLeagueScores = this.clanService.calculateWarLeagueScores(
-        wars,
+        result.data,
         clanTag
       );
 

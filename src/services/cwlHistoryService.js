@@ -11,18 +11,17 @@ class CwlHistoryService {
   }
 
   // Create
-  async create(cwlHistoryData) {
+  async updateOrCreate(season, cwlHistoryData) {
     const collection = await this.getCollection();
 
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    // const filter = { date: today }; // We'll store the date-only part
+    // Ensure only one entry per season
+    const filter = { season: season };
 
     const update = {
       $set: {
         data: cwlHistoryData,
         updatedAt: new Date(),
+        season: season,
       },
       $setOnInsert: {
         createdAt: new Date(),
