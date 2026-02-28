@@ -16,7 +16,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb_data:/data/db
+      - /mnt/volume_sfo3_01:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
